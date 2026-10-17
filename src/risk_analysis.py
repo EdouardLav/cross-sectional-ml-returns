@@ -151,7 +151,7 @@ def build_legs(
     model_name: str,
     n_quantiles: int = eval_cfg.n_quantiles,
 ) -> pd.DataFrame:
-    """Monthly long-leg, short-leg and long-short returns for one model."""
+    """Monthly long-leg, short-leg and long-short returns for one model, indexed by return month (t+1)."""
     rows = []
     for d, g in predictions.groupby("date"):
         if len(g) < n_quantiles:
@@ -166,7 +166,10 @@ def build_legs(
         sh = g.loc[g["q"] == 1, "realized"].mean()
         rows.append({"date": d, "long": lo, "short": sh, "long_short": lo - sh})
 
-    return pd.DataFrame(rows).set_index("date").sort_index()
+    out = pd.DataFrame(rows).set_index("date").sort_index()
+    out.index = out.index + pd.offsets.MonthEnd(1)
+    out.index.name = "date"
+    return out
 
 
 def worst_months(legs: pd.DataFrame, n: int = 3) -> pd.DataFrame:

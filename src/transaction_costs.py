@@ -196,6 +196,7 @@ def break_even_analysis(
         # Get positions and turnover
         positions = get_portfolio_positions(predictions, model_name)
         turnover = compute_turnover(positions)
+        turnover.index = turnover.index + pd.offsets.MonthEnd(1)
 
         turnover_stats[model_name] = {
             "mean": turnover.mean(),

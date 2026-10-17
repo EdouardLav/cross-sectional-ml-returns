@@ -121,6 +121,10 @@ def build_long_short_portfolio(
       3. Long portfolio: equal-weight average return of top decile
       4. Short portfolio: equal-weight average return of bottom decile
       5. Long-short return = long - short
+
+    Predictions are formed at the end of month t and earn the return of month t+1,
+    so the output is indexed by the month in which the return is earned (t+1).
+    Factor regressions, sub-periods and worst months all rely on that label.
     """
     portfolio_returns = []
 
@@ -157,7 +161,10 @@ def build_long_short_portfolio(
 
         portfolio_returns.append(row)
 
-    return pd.DataFrame(portfolio_returns).set_index("date")
+    out = pd.DataFrame(portfolio_returns).set_index("date")
+    out.index = out.index + pd.offsets.MonthEnd(1)
+    out.index.name = "date"
+    return out
 
 
 def portfolio_summary(
