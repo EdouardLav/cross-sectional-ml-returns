@@ -29,3 +29,12 @@ Runs reported in full: perps January 2022 to September 2026 with taker fees (5 b
 
 - C2: net alpha t-stat against BTC >= 2 at $10M, top 50, perps, taker fees.
 - C3: net Sharpe at $10M >= 0.5 in all three universe sizes (top 30, 50, 100), perps, taker fees.
+
+## Addendum 2, 31 October 2026: attribution and multiple testing, fixed before running
+
+No change to the frozen specification (quarter-step rebalancing, top 50). Checks reported whatever the outcome (`attribution.py`), on perpetuals 2022 to September 2026 and on spot October 2017 to May 2020:
+
+- A1, factor attribution: weekly regression of the book (gross, and net at $10M) on BTC, a liquidity factor (equal-weight least liquid 30% minus most liquid 30% of the top-100 universe, by 30-day median volume) and a momentum factor (past 21-day return, top 30% minus bottom 30%), Newey-West with 4 lags. Rule: gross alpha t-stat >= 2 on perpetuals.
+- A2, not a liquidity sort in disguise: rank IC of the score within liquidity terciles of the top-100 universe. Rule: positive in all three terciles, t-stat >= 2 in at least two.
+- A3, multiple testing: Deflated Sharpe (Bailey and Lopez de Prado, 2014) of the frozen book's net Sharpe at $10M, with N = every book configuration run on the perpetuals so far, counted from the result files. Reported, no threshold.
+- Forward test: the frozen specification run on October 2026 Binance data once it is published, then weekly, reported whatever the outcome.

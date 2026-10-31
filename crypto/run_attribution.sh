@@ -1,0 +1,7 @@
+cd "$(dirname "$0")/.."
+PY="$HOME/Desktop/Pro/cross-sectional-ml-returns/venv/bin/python3"
+T="crypto/out_n*/summary.csv,crypto/out_n*/riskbook_summary.csv,crypto/val_perp/summary.csv,crypto/val2_perp_taker/summary.csv,crypto/val2_perp_maker/summary.csv"
+echo "########## PERPETUALS 2022 to Sept. 2026"
+"$PY" crypto/attribution.py --data crypto/data --book crypto/val2_perp_taker/book_n50.csv --start 2022-01-01 --end 2026-09-30 --trials "$T" 2>&1 | grep -v -i warn | grep -v "result = func"
+echo "########## SPOT Oct. 2017 to May 2020"
+"$PY" crypto/attribution.py --data crypto/spot_data --book crypto/val2_spot/book_n50.csv --start 2017-10-01 --end 2020-05-31 2>&1 | grep -v -i warn | grep -v "result = func"
