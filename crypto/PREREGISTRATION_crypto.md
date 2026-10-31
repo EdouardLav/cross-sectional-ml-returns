@@ -20,3 +20,12 @@ Binance USDT perpetuals, June 2020 to September 2026: volatility and MAX rank ne
    - C1: net Sharpe >= 0.5 at $10M, top 50: deployable at that size.
 
 Every result is reported, including failures.
+
+## Addendum, 31 October 2026: one cost-reduction change, fixed before running
+
+The first validation found the signal (V1 pass) but costs bind: about 90% weekly turnover, net Sharpe 0.65 at $10M on perps, net alpha t = 1.2. One change is tested, chosen on theory before any run with it: partial rebalancing, trading a quarter of the way to the target weights each week (Garleanu and Pedersen, 2013), since the score is measured over 30 days and moves slowly. The BTC hedge is still reset weekly on the actual positions. Signal, universe, band and cost model are unchanged. The code was checked on July 2020 to March 2021 perps only: rate 1 reproduces the first validation exactly, rate 0.25 halves turnover.
+
+Runs reported in full: perps January 2022 to September 2026 with taker fees (5 bps) and with maker fees (2 bps, an assumption about execution), and Binance spot October 2017 to May 2020 (paper).
+
+- C2: net alpha t-stat against BTC >= 2 at $10M, top 50, perps, taker fees.
+- C3: net Sharpe at $10M >= 0.5 in all three universe sizes (top 30, 50, 100), perps, taker fees.

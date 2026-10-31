@@ -17,6 +17,7 @@ ap.add_argument("--fee_bps", type=float, required=True)
 ap.add_argument("--sizes", default="30,50,100")
 ap.add_argument("--impact_k", type=float, default=1.0)
 ap.add_argument("--band", type=float, default=0.4)
+ap.add_argument("--trade_rate", type=float, default=1.0)
 a = ap.parse_args()
 D, OUT = Path(a.data), Path(a.out)
 OUT.mkdir(parents=True, exist_ok=True)
@@ -75,7 +76,7 @@ def run(N):
         "funding": spearmanr(g.funding, g.fwd).statistic if fund is not None else np.nan}))
     ic = ic[p.groupby("date").size().reindex(ic.index) >= 20]
     icsum = pd.DataFrame({"mean": ic.mean(), "t": ic.mean() / ic.std() * np.sqrt(ic.count()), "weeks": ic.count()})
-    bk, prev, pL, pS = [], pd.Series(dtype=float), set(), set()
+    bk, prev, prev_a, pL, pS = [], pd.Series(dtype=float), pd.Series(dtype=float), set(), set()
     for t, g in p.groupby("date"):
         if len(g) < 20:
             continue
@@ -85,10 +86,19 @@ def run(N):
         pL, pS = L, S
         L, S = np.array(sorted(L)), np.array(sorted(S))
         iv = 1 / vol.loc[t]
-        w = pd.concat([iv[L] / iv[L].sum(), -iv[S] / iv[S].sum()]).groupby(level=0).sum()
+        wt = pd.concat([iv[L] / iv[L].sum(), -iv[S] / iv[S].sum()]).groupby(level=0).sum()
+        u = wt.index.union(prev_a.index)
+        act = prev_a.reindex(u).fillna(0) + a.trade_rate * (wt.reindex(u).fillna(0) - prev_a.reindex(u).fillna(0))
+        act = act[act.abs() >= 1e-3]
+        fa = g.set_index("sym").fwd.reindex(act.index)
+        for s in fa.index[fa.isna()]:
+            fa[s] = fwd(s, t)
+        act = act[fa.notna()]
+        prev_a = act.copy()
+        w = act.copy()
         h = -(w * beta.loc[t].reindex(w.index).fillna(1.0)).sum()
         w[btc] = w.get(btc, 0.0) + h
-        f = g.set_index("sym").fwd.reindex(w.index)
+        f = fa.reindex(w.index)
         if pd.isna(f.get(btc)):
             f[btc] = fwd(btc, t)
         gross = (w * f).sum()
