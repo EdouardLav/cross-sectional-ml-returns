@@ -4,6 +4,20 @@
 
 Monthly cross-sectional US equity return prediction with Ridge, Lasso, Random Forest, and XGBoost. Every result below comes from a fully nested pipeline: hyperparameters are selected by an inner walk-forward on training data only, evaluation uses an outer expanding walk-forward, alphas are benchmarked against the Carhart 4-factor model with Newey-West standard errors, and transaction costs use realized turnover. The project also documents three self-audits (a look-ahead bias, a degenerate-selection bug, and a one-month misalignment in the factor regressions) whose lessons matter as much as the numbers.
 
+## Update, November 2026: the survivorship test, and a crypto follow-up
+
+**The headline alpha below does not survive a point-in-time universe.** I rebuilt the universe from historical S&P 500 membership ([fja05680/sp500](https://github.com/fja05680/sp500)), took the top 100 names by trailing 6-month dollar volume each month using only data known at that date, and reran exactly the same code (`survivorship/`). The decision rule was written before the results (`survivorship/PREREGISTRATION.md`): the signal survives if, on the point-in-time universe over 2015-2024, Ridge has an IC t-stat of at least 2 and a Carhart alpha t-stat (Newey-West) of at least 2.
+
+| Universe (Ridge, 2015-2024) | IC (t) | Sharpe | Carhart alpha (t, HAC) |
+|---|---|---|---|
+| A: today's S&P 100, rerun on fresh data | 0.042 (2.45) | 1.00 | 13.9% (2.70) |
+| B: today's S&P 500 members, top 100 by volume | 0.004 (0.17) | 0.49 | 8.4% (2.24) |
+| C: S&P 500 members at each date, top 100 by volume | 0.009 (0.72) | -0.06 | -3.6% (-0.77) |
+
+No model and no pre-announced variant (top 50, 3-month volume window, both) passes on C: the study's alpha came from the universe. The linear-versus-tree comparison and the audits below still stand, but the alpha level should not be read as evidence. B keeps a t = 2.2 alpha with a zero IC, because every candidate is still a survivor. Remaining limit: Yahoo Finance no longer carries most acquired or delisted names, so C covers 56% of historical members in 2005, 78% in 2015 and over 90% from 2020.
+
+**Follow-up on crypto perpetuals (`crypto/`)**, where point-in-time data including delisted contracts is public. Rules were pushed before each run (`crypto/PREREGISTRATION_crypto.md`). A score of low 30-day volatility and low 30-day MAX ranks next-week returns on never-seen Binance spot data from October 2017 to May 2020 (rank IC t = 5.4, top 50, delisted coins included) and on Binance perpetuals from 2022 to September 2026 (t = 8.3). A BTC-hedged, inverse-volatility quintile book moved a quarter of the way to target each week nets a Sharpe of 1.0 at $10M on perpetuals, after taker fees, liquidity-based spreads and square-root impact. Net alpha t = 1.8 is not yet significant, and 2026 is negative so far. The exploratory first pass is kept in `crypto/research.py` and `crypto/construct.py`.
+
 ## Headline Results (out-of-sample 2015–2024, 120 months)
 
 | Model | Mean IC (t) | Sharpe gross | Sharpe net 15bps | Turnover | Carhart alpha (t, HAC) | Break-even |

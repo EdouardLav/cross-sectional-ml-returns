@@ -1,0 +1,4 @@
+leg,alpha_annual_pct,t_stat_HAC,n_months,spec,contribution_to_LS_alpha_pct
+long,-0.6101661328705328,-0.16210694563048125,120,Carhart,
+short,2.993732385081757,1.3737127181398276,120,Carhart,-2.993732385081757
+long_short,-3.603898517952289,-0.7877480720228234,120,Carhart,

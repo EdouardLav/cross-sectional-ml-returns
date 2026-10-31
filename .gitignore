@@ -31,3 +31,10 @@ Thumbs.db
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Survivorship test and crypto study: raw market data stays local (reproducible with the download scripts)
+survivorship/data/
+survivorship/runs/*/*.parquet
+crypto/data/
+crypto/spot_data/
+crypto/out_*/*.parquet
