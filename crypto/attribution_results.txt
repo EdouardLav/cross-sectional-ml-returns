@@ -1,0 +1,35 @@
+########## PERPETUALS 2022 to Sept. 2026
+
+== A1: factor attribution of the frozen book (247 weeks)
+gross    alpha +42.9%/yr (t 2.09) | BTC +0.14 (t 1.71) | LIQ +0.09 (t 0.90) | MOM +0.05 (t 0.52) | R2 0.03
+net_10m  alpha +37.5%/yr (t 1.82) | BTC +0.14 (t 1.71) | LIQ +0.09 (t 0.89) | MOM +0.05 (t 0.51) | R2 0.03
+factor Sharpe (ann.): LIQ 0.00, MOM 0.73; corr(book gross, LIQ) 0.07, corr(book gross, MOM) 0.01
+
+== A2: rank IC of the score within liquidity terciles of the top-100 universe
+              mean_ic      t  weeks
+terc                               
+least liquid    0.084  5.958    247
+middle          0.112  7.654    247
+most liquid     0.131  6.983    247
+
+== A3: Deflated Sharpe: 51 configurations counted, annualized Sharpe 1.00, expected best of 51 null trials 1.25, DSR = 0.29
+
+RULE A1 (gross alpha t >= 2 after BTC, LIQ, MOM): PASS (2.09)
+RULE A2 (IC > 0 in all terciles, t >= 2 in two): PASS
+A3 Deflated Sharpe (reported): 0.29
+########## SPOT Oct. 2017 to May 2020
+
+== A1: factor attribution of the frozen book (131 weeks)
+gross    alpha +60.3%/yr (t 2.81) | BTC +0.11 (t 2.39) | LIQ -0.02 (t -0.20) | MOM -0.18 (t -2.08) | R2 0.14
+net_10m  alpha +18.1%/yr (t 0.85) | BTC +0.11 (t 2.33) | LIQ -0.02 (t -0.32) | MOM -0.18 (t -2.12) | R2 0.14
+factor Sharpe (ann.): LIQ 0.79, MOM 0.47; corr(book gross, LIQ) -0.06, corr(book gross, MOM) -0.28
+
+== A2: rank IC of the score within liquidity terciles of the top-100 universe
+              mean_ic      t  weeks
+terc                               
+least liquid    0.070  3.163    138
+middle          0.056  2.368    138
+most liquid     0.126  4.915    138
+
+RULE A1 (gross alpha t >= 2 after BTC, LIQ, MOM): PASS (2.81)
+RULE A2 (IC > 0 in all terciles, t >= 2 in two): PASS
