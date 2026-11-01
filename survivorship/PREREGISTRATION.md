@@ -17,3 +17,11 @@ Does the S&P 100 study's result survive once the universe is rebuilt point-in-ti
 
 ## Decision rule
 The signal is said to survive if, on C over 2015-2024, Ridge has an IC t-stat of at least 2 and a Carhart alpha t-stat (Newey-West) of at least 2. Otherwise the published alpha is attributed to the universe. Every variant is reported, including those that go against the conclusion.
+
+## Addendum, 1 November 2026: universe D from CRSP, written before the run
+
+Data: CRSP monthly stock file (permno level, NYSE, AMEX and NASDAQ ordinary common shares), 1963 to September 2026, delisted stocks included, with delisting returns in the monthly return. The file stays out of the repository (WRDS licence); `build_crsp.py` turns it into the monthly matrices the pipeline reads.
+
+Universe D: at each month-end, the 500 largest stocks by market capitalization (a proxy for the S&P 500, as this file carries no index membership), then the top 100 by trailing 6-month average dollar volume, using only data known at that date. No name is missing: 385 stocks enter D between 2005 and 2025, 111 of them later delisted (Lehman included, with its -99.7% last month).
+
+Fixed in advance: same code as A, B and C (`run_universe.run` and `top_by_dollar_volume`, unchanged; `run_crsp.py` only builds the mask) and the same decision rule: the signal survives if, on D over 2015-2024, Ridge has an IC t-stat of at least 2 and a Carhart alpha t-stat (Newey-West) of at least 2. As in A to C, returns are winsorized at 1% and 99% within each month, delisting returns included. Reported whatever the outcome: all four models; top 50, a 3-month volume window, and both (linear models); sub-periods 2015-2019 and 2020-2024. D becomes the main test because it has no data gap; C stays reported.
