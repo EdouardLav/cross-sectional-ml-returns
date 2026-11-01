@@ -1,0 +1,69 @@
+171 non-crypto perpetuals removed (86 in tradfi.txt, 138 by the weekend test, 85 by the test only); 729 kept
+today's top 100 removed by the test only: ['AVGO']
+today's top 100 kept with weekend ratio < 0.55 (check by name): {}
+########## CRYPTO ONLY, perps 2022 to Sept. 2026, taker 5 bps, quarter-step
+== top 30: rank IC with next-week return
+          mean      t  weeks
+score    0.135  7.330    247
+vol     -0.144 -7.415    247
+max     -0.122 -7.167    247
+funding -0.030 -2.189    247
+
+== top 50: rank IC with next-week return
+          mean      t  weeks
+score    0.136  8.929    247
+vol     -0.144 -8.768    247
+max     -0.123 -8.996    247
+funding -0.034 -2.758    247
+
+== top 100: rank IC with next-week return
+          mean      t  weeks
+score    0.113  9.217    247
+vol     -0.120 -8.964    247
+max     -0.101 -9.413    247
+funding -0.030 -3.283    247
+
+== BTC-hedged inverse-vol quintile book (score = low volatility and low MAX)
+N                     30      50      100
+weeks              247.00  247.00  247.00
+avg_names           30.00   50.00   99.94
+sharpe_gross         1.03    1.22    0.65
+alpha_t_gross        1.92    2.30    1.15
+beta_btc             0.16    0.14    0.18
+turnover             0.44    0.43    0.42
+ann_vol              0.48    0.42    0.40
+maxdd_gross         -0.57   -0.40   -0.68
+cost_bps_week_1m     5.34    5.54    6.12
+sharpe_net_1m        0.97    1.15    0.57
+cost_bps_week_10m   10.77   11.18   12.21
+sharpe_net_10m       0.91    1.08    0.49
+cost_bps_week_50m   20.58   21.39   23.21
+sharpe_net_50m       0.81    0.95    0.35
+alpha_t_net_10m      1.69    2.01    0.83
+N
+30     {2022: 1.63, 2023: 0.28, 2024: 1.91, 2025: 1.83, 2026: -1.57}
+50     {2022: 1.55, 2023: 0.31, 2024: 1.77, 2025: 2.04, 2026: -0.57}
+100     {2022: 0.51, 2023: 0.43, 2024: 1.97, 2025: 1.02, 2026: -1.0}
+
+RULE V1 (score IC t >= 2, top 50): PASS (8.93)
+RULE V2 (gross alpha t vs BTC >= 2, top 50): PASS (2.30)
+RULE C1 (net Sharpe >= 0.5 at $10M, top 50): PASS (1.08)
+########## ATTRIBUTION, crypto only
+
+== A1: factor attribution of the frozen book (247 weeks)
+gross    alpha +44.9%/yr (t 2.20) | BTC +0.15 (t 1.74) | LIQ +0.07 (t 0.60) | MOM +0.08 (t 0.97) | R2 0.03
+net_10m  alpha +39.1%/yr (t 1.91) | BTC +0.15 (t 1.74) | LIQ +0.07 (t 0.59) | MOM +0.08 (t 0.96) | R2 0.03
+factor Sharpe (ann.): LIQ 0.15, MOM 0.95; corr(book gross, LIQ) 0.04, corr(book gross, MOM) 0.05
+
+== A2: rank IC of the score within liquidity terciles of the top-100 universe
+              mean_ic      t  weeks
+terc                               
+least liquid    0.086  6.227    247
+middle          0.110  7.482    247
+most liquid     0.137  7.699    247
+
+== A3: Deflated Sharpe: 54 configurations counted, annualized Sharpe 1.08, expected best of 54 null trials 1.26, DSR = 0.35
+
+RULE A1 (gross alpha t >= 2 after BTC, LIQ, MOM): PASS (2.20)
+RULE A2 (IC > 0 in all terciles, t >= 2 in two): PASS
+A3 Deflated Sharpe (reported): 0.35

@@ -43,3 +43,5 @@ crypto/fwd_data/
 crypto/fwd_data_crypto/
 crypto/live/*/positions.parquet
 crypto/_to_delete/
+survivorship/data_crsp/
+*crsp*.parquet
