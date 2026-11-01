@@ -38,3 +38,8 @@ survivorship/runs/*/*.parquet
 crypto/data/
 crypto/spot_data/
 crypto/out_*/*.parquet
+crypto/data_crypto/
+crypto/fwd_data/
+crypto/fwd_data_crypto/
+crypto/live/*/positions.parquet
+crypto/_to_delete/
