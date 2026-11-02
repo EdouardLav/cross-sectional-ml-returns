@@ -1,5 +1,5 @@
 cd "$(dirname "$0")/.."
-PY="$HOME/Desktop/Pro/cross-sectional-ml-returns/venv/bin/python3"
+PY="${PY:-$PWD/venv/bin/python3}"
 f() { grep -v -i warn | grep -v "result = func"; }
 "$PY" crypto/make_crypto_only.py --src crypto/data --dst crypto/data_crypto 2>&1 | f
 echo "########## CRYPTO ONLY, perps 2022 to Sept. 2026, taker 5 bps, quarter-step"

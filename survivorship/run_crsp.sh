@@ -1,5 +1,5 @@
 cd "$(dirname "$0")/.."
-PY="$HOME/Desktop/Pro/cross-sectional-ml-returns/venv/bin/python3"
+PY="${PY:-$PWD/venv/bin/python3}"
 R="$PWD/survivorship/runs"
 j() {
   n=$1; m=$2; shift 2

@@ -1,6 +1,6 @@
 set -eo pipefail
 cd "$(dirname "$0")/.."
-PY="$HOME/Desktop/Pro/cross-sectional-ml-returns/venv/bin/python3"
+PY="${PY:-$PWD/venv/bin/python3}"
 END="${1:?usage: bash crypto/run_forward.sh YYYY-MM-DD (a Sunday)}"
 f() { grep -v -i warn | grep -v "result = func" || true; }
 "$PY" crypto/update_forward.py --src crypto/data --dst crypto/fwd_data --end "$END" 2>&1 | f
