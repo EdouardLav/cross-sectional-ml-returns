@@ -1,27 +1,70 @@
-# Cross-Sectional ML Return Prediction
+# Cross-Sectional Return Prediction: a Survivorship Test and a Crypto Follow-up
 
-**Can machine learning models capture nonlinear relationships between stock characteristics and future returns, beyond what linear models achieve?**
+**A pre-registered research log.** A machine-learning study of US equity returns found a 14.3% Carhart alpha on today's S&P 100. Rebuilt point-in-time, first from historical S&P 500 membership and then on CRSP with delisted stocks, the alpha disappears. The same protocol, applied to Binance perpetuals, where point-in-time data with delisted contracts is public, finds a low-volatility, low-MAX signal that holds on never-seen data. The frozen book is now forward-tested every week.
 
-Monthly cross-sectional US equity return prediction with Ridge, Lasso, Random Forest, and XGBoost. Every result below comes from a fully nested pipeline: hyperparameters are selected by an inner walk-forward on training data only, evaluation uses an outer expanding walk-forward, alphas are benchmarked against the Carhart 4-factor model with Newey-West standard errors, and transaction costs use realized turnover. The project also documents three self-audits (a look-ahead bias, a degenerate-selection bug, and a one-month misalignment in the factor regressions) whose lessons matter as much as the numbers.
+Every test here was written down and pushed before it was run: see `survivorship/PREREGISTRATION.md`, `crypto/PREREGISTRATION_crypto.md` and the commit timestamps.
 
-## Update, November 2026: the survivorship test, and a crypto follow-up
+## Results at a glance
 
-**The headline alpha below does not survive a point-in-time universe.** I rebuilt the universe from historical S&P 500 membership ([fja05680/sp500](https://github.com/fja05680/sp500)), took the top 100 names by trailing 6-month dollar volume each month using only data known at that date, and reran exactly the same code (`survivorship/`). The decision rule was written before the results (`survivorship/PREREGISTRATION.md`): the signal survives if, on the point-in-time universe over 2015-2024, Ridge has an IC t-stat of at least 2 and a Carhart alpha t-stat (Newey-West) of at least 2.
+### US equities: the alpha came from the universe
 
-| Universe (Ridge, 2015-2024) | IC (t) | Sharpe | Carhart alpha (t, HAC) |
-|---|---|---|---|
-| A: today's S&P 100, rerun on fresh data | 0.042 (2.45) | 1.00 | 13.9% (2.70) |
-| B: today's S&P 500 members, top 100 by volume | 0.004 (0.17) | 0.49 | 8.4% (2.24) |
-| C: S&P 500 members at each date, top 100 by volume | 0.009 (0.72) | -0.06 | -3.6% (-0.77) |
-| D: CRSP, 500 largest US stocks at each date (delisted included), top 100 by volume | -0.014 (-0.90) | -0.07 | -5.4% (-1.15) |
+Ridge, out-of-sample 2015-2024, same code, features and evaluation on every universe:
 
-No model and no pre-announced variant (top 50, 3-month volume window, both) passes on C: the study's alpha came from the universe. The linear-versus-tree comparison and the audits below still stand, but the alpha level should not be read as evidence. B keeps a t = 2.2 alpha with a zero IC, because every candidate is still a survivor. Remaining limit: Yahoo Finance no longer carries most acquired or delisted names, so C covers 56% of historical members in 2005, 78% in 2015 and over 90% from 2020. Rerun on CRSP with no data gap (universe D, pre-registered on 1 November 2026 in `survivorship/PREREGISTRATION.md`; `survivorship/run_crsp.py`, CRSP data not included under the WRDS licence): same answer, no model and no variant passes, and the long leg's alpha is -1.0% (t = -0.3).
+| Universe | Built from | IC (t) | Sharpe | Carhart alpha (t, HAC) |
+|---|---|---|---|---|
+| A: published | Today's S&P 100 | 0.042 (2.45) | 1.00 | 13.9% (2.70) |
+| B | Today's S&P 500 members, top 100 by dollar volume | 0.004 (0.17) | 0.49 | 8.4% (2.24) |
+| C | S&P 500 members at each date, Yahoo prices | 0.009 (0.72) | -0.06 | -3.6% (-0.77) |
+| D | 500 largest US stocks at each date, CRSP, delisted included | -0.014 (-0.90) | -0.07 | -5.4% (-1.15) |
 
-**Follow-up on crypto perpetuals (`crypto/`)**, where point-in-time data including delisted contracts is public. Rules were pushed before each run (`crypto/PREREGISTRATION_crypto.md`). A score of low 30-day volatility and low 30-day MAX ranks next-week returns on never-seen Binance spot data from October 2017 to May 2020 (rank IC t = 5.4, top 50, delisted coins included) and on Binance perpetuals from 2022 to September 2026 (t = 8.3). A BTC-hedged, inverse-volatility quintile book moved a quarter of the way to target each week nets a Sharpe of 1.0 at $10M on perpetuals, after taker fees, liquidity-based spreads and square-root impact. Net alpha t = 1.8 is not yet significant, and 2026 is negative so far. Two further pre-registered checks (`crypto/attribution.py`): the gross alpha survives BTC, liquidity and momentum factors (t = 2.1 on perpetuals, 2.8 on spot), and the score ranks next-week returns within every liquidity tercile (t = 6.0, 7.7 and 7.0 on perpetuals), so it is a volatility effect, not size in disguise. Counting the 51 portfolio configurations run on the perpetuals, the Deflated Sharpe is 0.29: the signal is established, the portfolio is not yet, and its next test is forward data. The exploratory first pass is kept in `crypto/research.py` and `crypto/construct.py`.
+No model (Ridge, Lasso, Random Forest, XGBoost) and no pre-announced variant (top 50, 3-month volume window, both) passes the decision rule on C or D. A is rerun on fresh data; the published run gave 14.3% (t = 2.60). B keeps an alpha with a zero IC, the signature of a survivor universe. The long leg, which carried the alpha on A (12.3%, t = 3.3), earns -1.0% (t = -0.3) on D. Details: `survivorship/`, `survivorship/crsp_results.txt` (CRSP data not included, WRDS licence).
 
-**Correction, 1 November 2026 (Addendum 3).** Building the first live book showed that since late 2025 Binance lists perpetuals on stocks, ETFs, commodities and tokenized gold, and that their low volatility put them in the long leg (76% of it in September 2026). The exclusion rule was pushed before the run (`crypto/make_crypto_only.py`, `crypto/tradfi.txt`). On crypto only, results barely move (`crypto/validation3_results.txt`): rank IC t = 8.9, net Sharpe 1.08 at $10M, net alpha t = 2.0, gross alpha after BTC, liquidity and momentum t = 2.2, Deflated Sharpe 0.35 over 54 configurations, and 2026 is still negative. Crypto only is now the main specification; both versions are reported in the weekly forward test (`crypto/run_forward.sh`).
+### Crypto perpetuals: the signal holds, the portfolio is on trial
 
-## Headline Results (out-of-sample 2015–2024, 120 months)
+Score: average rank of low 30-day volatility and low 30-day MAX, signs fixed in advance. Book: BTC-hedged, inverse-volatility quintiles of the 50 most liquid crypto perpetuals, moved a quarter of the way to target each week, net of taker fees, funding, spread and square-root impact. Stock, ETF and commodity perpetuals are excluded (Addendum 3).
+
+| Test | Result |
+|---|---|
+| Rank IC, Binance spot Oct 2017 to May 2020, never seen, 26 delisted coins | 0.101 (t = 5.4) |
+| Rank IC, perpetuals 2022 to Sep 2026 (research sample) | 0.136 (t = 8.9) |
+| Net Sharpe at $1M / $10M / $50M | 1.15 / 1.08 / 0.95 |
+| Gross alpha after BTC, liquidity and momentum factors | 44.9% a year, t = 2.20 |
+| Rank IC within liquidity terciles | t = 6.2 / 7.5 / 7.7 |
+| Deflated Sharpe, 54 configurations counted | 0.35 |
+| 2026 to September, net Sharpe at $10M | -0.57 |
+
+The signal is established; the portfolio is not yet, given the deflated Sharpe and 2026. Its test is forward data.
+
+### Forward test: frozen specification, crypto only, net at $10M
+
+| Week | Net | BTC |
+|---|---|---|
+| 27 Sep to 4 Oct 2026 | +1.11% | +2.35% |
+| 4 to 11 Oct | +0.89% | -3.21% |
+| 11 to 18 Oct | +6.81% | -2.04% |
+| 18 to 25 Oct | +0.32% | -2.51% |
+| 25 Oct to 1 Nov | +6.37% | -2.39% |
+
+Cumulative +16.3% over five weeks while BTC fell 7.6%. Five weeks is noise: the book's weekly volatility is about 6%. The table is updated every week whatever the outcome (`crypto/run_forward.sh`); the all-perpetuals version and each week's target book are in `crypto/live/`. The first week includes three days (28 to 30 Sep) downloaded before the freeze but never evaluated.
+
+## Timeline
+
+- **29 Oct 2026:** an interviewer challenged the universe of the equity study. Test design and decision rule pushed before any run.
+- **30-31 Oct:** universes A to C on Yahoo; crypto rules pushed before the validation on never-seen spot data; addenda on partial rebalancing and on factor attribution, each pushed before its run.
+- **1 Nov:** Addendum 3, excluding non-crypto perpetuals found while building the first live book; universe D pre-registered on CRSP, run started 14 seconds after the commit.
+- **2 Nov:** first forward run; weekly from then on.
+
+## Repository map
+
+- `src/`, `main.py`, `config.py`: the original equity pipeline (Part 1 below).
+- `survivorship/`: universes A to D (`run_universe.py`, `run_crsp.py`), pre-registration, results.
+- `crypto/`: Binance download and weekly update, validation, attribution, crypto-only filter, live book and forward test, pre-registration and addenda.
+
+## Part 1. The original equity study (universe A, today's S&P 100)
+
+> Everything in this part describes the published version on today's S&P 100. The pipeline, the nested design and the three audits stand; the alpha does not survive a point-in-time universe (see above).
+
+### Headline results on universe A (out-of-sample 2015–2024, 120 months)
 
 | Model | Mean IC (t) | Sharpe gross | Sharpe net 15bps | Turnover | Carhart alpha (t, HAC) | Break-even |
 |-------|------------|--------------|------------------|----------|------------------------|------------|
@@ -38,7 +81,7 @@ No model and no pre-announced variant (top 50, 3-month volume window, both) pass
 4. **Symmetric nested tuning did not rescue the trees.** All four models were tuned by the same inner walk-forward on the same folds. The inner CV drives every model toward maximal regularization (Ridge to the heavy-shrinkage plateau, RF to its most-regularized corner in 9/10 folds), which is itself evidence about the signal-to-noise ratio.
 5. **Out-of-sample R-squared is ~0.1% for the linear models and negative for the trees** — the textbook shape of monthly equity prediction: negligible level predictability, monetizable ranking ability (positive IC).
 
-## Three Self-Audits
+### Three Self-Audits
 
 ### Audit 1: Look-ahead via a time-constant feature
 An early version included a static log-market-cap feature (today's cap applied to all historical dates). A feature constant in time per ticker is a **ticker identifier**: trees can split on it and memorize which stocks turned out to be the 2015–2024 winners, since today's megacap status embeds exactly that rally. Removing it halved Random Forest's IC (0.054 to 0.027) and erased XGBoost's alpha, while linear models barely moved — they could only extract a bounded "long megacaps" tilt, not per-stock memorization. Walk-forward validation cannot catch this class of leak: the split was correct, the feature construction was contaminated. Note that split-based feature importance also failed to flag it (the feature ranked last in RF's Gini importance): ablation, not importance, is the leak detector.
@@ -49,7 +92,7 @@ The first nested-CV run let Lasso select alpha = 0.01 on early folds — a penal
 ### Audit 3: Date alignment of the factor regressions
 Predictions are formed at the end of month t and earn the return of month t+1, but the first version kept the formation date on the return series and regressed each return on the factors of month t. Regressing on last month's factors gives near-zero betas, so the reported "alpha" was close to the raw mean return (Carhart 17.9%, market beta -0.02, R-squared 0.02). The giveaway was that R-squared: a book sorted on volatility is not beta-neutral by accident, and the long leg's correlation with the market goes from -0.13 to 0.87 once shifted by one month. Fix: every portfolio, leg and turnover series is now indexed by the month in which the return is earned. Corrected Ridge Carhart alpha: 14.3% (t_HAC = 2.60), market beta 0.36. Sharpe, IC, turnover and costs are unaffected.
 
-## Methodology
+### Methodology
 
 ### Universe & Data
 - **Universe:** S&P 100 constituents (101 tickers after dropping the GOOG duplicate share class). Survivorship bias acknowledged: current list, not point-in-time constituents.
@@ -82,14 +125,14 @@ Predictions are formed at the end of month t and earn the return of month t+1, b
 - **Costs:** realized turnover from position diffs; 15 bps one-way charged round-trip on traded fraction; break-even swept 0–100 bps.
 - **Robustness:** OOS R-squared, Lo (2002) Sharpe confidence intervals, sub-period split (2015–2019 vs 2020–2024), worst months with leg attribution, long/short leg-split alphas.
 
-## Risk Profile (Ridge, headline model)
+### Risk Profile (Ridge, headline model)
 
 - **Worst months:** Oct 2018 (-12.2%, long leg -14.3% as the market fell 7.6%), Aug 2024 (-9.4%, the defensive short leg rallied +7.5%), Jan 2016 (-8.5%, long leg -12.8%).
 - **Max drawdown:** -29.5%, from September 2018 to September 2019, ending with the September 2019 momentum-to-value rotation. February and March 2020 are not among the worst months (+0.9% and -0.6%).
 - **Leg split (Carhart, HAC):** long leg +12.2%/yr alpha (t = 3.24, market beta 1.19); short leg -2.1%/yr (t = -0.84), so shorting those names adds a little, insignificantly. The edge sits in the long leg.
 - **Exposure:** the long decile is mostly volatile technology and consumer names (AMD, TSLA, NVDA, NFLX), the short decile staples, utilities and telecom (KO, PG, JNJ, PEP, VZ).
 
-## Figures
+### Figures
 
 ![Cumulative Returns](figures/cumulative_returns.png)
 ![Break-Even](figures/break_even_analysis.png)
@@ -100,7 +143,7 @@ Predictions are formed at the end of month t and earn the return of month t+1, b
 ![Feature Importance](figures/feature_importance.png)
 ![Turnover](figures/turnover_timeseries.png)
 
-## Project Structure
+### Project Structure
 
 ```
 cross-sectional-ml-returns/
@@ -116,22 +159,28 @@ cross-sectional-ml-returns/
 │   ├── transaction_costs.py   # Realized turnover, net Sharpe, break-even
 │   ├── risk_analysis.py       # OOS R2, Sharpe CIs, sub-periods, legs
 │   └── utils.py               # Plots
+├── survivorship/              # Point-in-time universes A to D, CRSP rerun, pre-registration
+├── crypto/                    # Binance perpetuals study, forward test, pre-registration
 ├── data/ · results/ · figures/
 └── requirements.txt
 ```
 
-## Quick Start
+### Quick Start
 
 ```bash
 pip install -r requirements.txt
 python main.py            # ~10 min (nested CV); --skip-data to reuse parquet
+python survivorship/run_all.py          # universes A to C (Yahoo)
+bash survivorship/run_crsp.sh           # universe D (needs a CRSP monthly file, see build_crsp.py)
+bash crypto/run_validation3.sh          # crypto-only backtest, rules and attribution
+bash crypto/run_forward.sh YYYY-MM-DD   # weekly forward test, a Sunday
 ```
 
-## Known Limitations
+### Known Limitations
 
 | Limitation | How to address |
 |-----------|----------------|
-| Survivorship bias (current S&P 100), amplified by a long-volatility book: NVDA, TSLA and AMD make 43% of long-leg returns, and the Sharpe falls to 0.62 without them | CRSP/Compustat point-in-time constituents |
+| Survivorship bias (current S&P 100), amplified by a long-volatility book: NVDA, TSLA and AMD make 43% of long-leg returns, and the Sharpe falls to 0.62 without them | Tested in November 2026: on point-in-time universes (C, D) the alpha disappears |
 | No size/value features (dropped for leakage) | Point-in-time fundamentals |
 | Flat 15 bps cost | Per-stock impact model (Almgren-Chriss) |
 | ~10 names per decile | Larger universe; quintile robustness check |
