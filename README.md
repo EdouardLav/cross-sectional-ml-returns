@@ -47,13 +47,6 @@ The signal is established; the portfolio is not yet, given the deflated Sharpe a
 
 Cumulative +16.3% over five weeks while BTC fell 7.6%. Five weeks is noise: the book's weekly volatility is about 6%. The table is updated every week whatever the outcome (`crypto/run_forward.sh`); the all-perpetuals version and each week's target book are in `crypto/live/`. The first week includes three days (28 to 30 Sep) downloaded before the freeze but never evaluated.
 
-## Timeline
-
-- **29 Oct 2026:** an interviewer challenged the universe of the equity study. Test design and decision rule pushed before any run.
-- **30-31 Oct:** universes A to C on Yahoo; crypto rules pushed before the validation on never-seen spot data; addenda on partial rebalancing and on factor attribution, each pushed before its run.
-- **1 Nov:** Addendum 3, excluding non-crypto perpetuals found while building the first live book; universe D pre-registered on CRSP, run started 14 seconds after the commit.
-- **2 Nov:** first forward run; weekly from then on.
-
 ## Repository map
 
 - `src/`, `main.py`, `config.py`: the original equity pipeline (Part 1 below).
