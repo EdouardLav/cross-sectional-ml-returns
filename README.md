@@ -68,7 +68,7 @@ Cumulative +16.3% over five weeks while BTC fell 7.6%. Five weeks is noise: the 
 
 ### Key Findings
 
-1. **The alpha survives the momentum control, and the book is long volatility.** The feature set includes momentum 12-1 and short-term reversal, so the natural objection is that the "alpha" is just UMD exposure. It is not: Ridge's UMD beta is -0.16 with t = -0.90, and adding UMD moves the alpha from 13.5% (FF3) to 14.3% (Carhart, t_HAC = 2.60). The book is not market-neutral, though: Carhart betas are 0.36 on the market (t = 3.5) and 0.44 on SMB. Its ranking loads positively on realized volatility and MAX (rank correlations of 0.88 and 0.93), so it is long volatile, lottery-like names and short defensives, the opposite sign to the published low-volatility and MAX anomalies. In a current-constituent universe, that is exactly where survivorship bias bites hardest (see Known Limitations).
+1. **The alpha survives the momentum control, and the book is long volatility.** The feature set includes momentum 12-1 and short-term reversal, so the natural objection is that the "alpha" is just UMD exposure. It is not: Ridge's UMD beta is -0.16 with t = -0.90, and adding UMD moves the alpha from 13.5% (FF3) to 14.3% (Carhart, t_HAC = 2.60). The book is not market-neutral, though: Carhart betas are 0.36 on the market (t = 3.5) and 0.44 on SMB. Its ranking loads positively on realized volatility and MAX (rank correlations of 0.88 and 0.93), so it is long volatile, lottery-like names and short defensives, the opposite sign to the published low-volatility and MAX anomalies. In a current-constituent universe, that is exactly where survivorship bias bites hardest (see the survivorship test above).
 2. **Both linear models beat both tree models; the two linear models are indistinguishable from each other.** Ridge (1.00) vs Lasso (0.92) is well inside sampling error (Lo-2002 SE ≈ 0.32 each; 95% CIs [0.36, 1.63] and [0.29, 1.55] overlap almost entirely). The linear-vs-tree gap is the robust statement.
 3. **XGBoost has no deployable edge**: net of 15 bps its Sharpe is -0.01 and its break-even is exactly the cost assumption (15 bps). Random Forest's Carhart alpha is not significant at 5% (t = 1.30) and its Sharpe is entirely concentrated post-2020 (0.06 pre / 1.08 post), a regime dependence the linear models do not share (Ridge: 0.81 / 1.15).
 4. **Symmetric nested tuning did not rescue the trees.** All four models were tuned by the same inner walk-forward on the same folds. The inner CV drives every model toward maximal regularization (Ridge to the heavy-shrinkage plateau, RF to its most-regularized corner in 9/10 folds), which is itself evidence about the signal-to-noise ratio.
@@ -168,17 +168,6 @@ bash survivorship/run_crsp.sh           # universe D (needs a CRSP monthly file,
 bash crypto/run_validation3.sh          # crypto-only backtest, rules and attribution
 bash crypto/run_forward.sh YYYY-MM-DD   # weekly forward test, a Sunday
 ```
-
-### Known Limitations
-
-| Limitation | How to address |
-|-----------|----------------|
-| Survivorship bias (current S&P 100), amplified by a long-volatility book: NVDA, TSLA and AMD make 43% of long-leg returns, and the Sharpe falls to 0.62 without them | Tested in November 2026: on point-in-time universes (C, D) the alpha disappears |
-| No size/value features (dropped for leakage) | Point-in-time fundamentals |
-| Flat 15 bps cost | Per-stock impact model (Almgren-Chriss) |
-| ~10 names per decile | Larger universe; quintile robustness check |
-| Equal-weight, no sector or beta neutrality (market beta 0.36) | Constrained optimizer |
-| P&L computed on winsorized returns (conservative: Ridge Sharpe is 1.10 on raw returns) | Winsorize the training target only |
 
 ## References
 
